@@ -9,19 +9,26 @@ import React, { useState } from 'react'
 // }
 
 const Stat = ({name, value}) => (
-  <div>
-    <p>{name} {value}</p>
-  </div>
+  <React.Fragment>
+    <tr>
+      <td>{name}</td>
+      <td>{value}</td>
+    </tr> 
+  </React.Fragment>
 )
 
 const Statistics = (props) => {
   return (
     <div>
-      {props.categories.map((category) => (
-        <Stat key={category.name} name={category.name} value={category.value} />
-      ))}
-      <p>average {(props.good - props.bad) / (props.good + props.neutral + props.bad)}</p>
-      <p>positive {(props.good) / (props.good + props.neutral + props.bad)}%</p>
+      <table>
+        <tbody>
+          {props.categories.map((category) => (
+            <Stat key={category.name} name={category.name} value={category.value} />
+          ))}
+        </tbody>
+        
+      </table>
+      
     </div>
   )
 }
@@ -49,7 +56,7 @@ const App = () => {
   const addNeutral = () => setNeutral(neutral + 1)
   const addBad = () => setBad(bad + 1)
 
-  const votes = [
+  const stats = [
     {
       name: "good",
       value: good
@@ -61,6 +68,14 @@ const App = () => {
     {
       name: "bad",
       value: bad
+    },
+    {
+      name: "average",
+      value: (good - bad) / (good + neutral + bad)
+    },
+    {
+      name: "positive",
+      value: ((good) * 100 / (good + neutral + bad)) + "%" 
     }
   ]
 
@@ -71,7 +86,7 @@ const App = () => {
       <VoteButton text={"neutral"} handleClick={addNeutral} />
       <VoteButton text={"bad"} handleClick={addBad} />
       <h1>statistics</h1>
-      {(good || bad || neutral) ? <Statistics categories={votes} good={good} neutral={neutral} bad={bad}/> : <p>No feedback given</p>}
+      {(good || bad || neutral) ? <Statistics categories={stats}/> : <p>No feedback given</p>}
       
     </div>
   )
