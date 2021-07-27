@@ -1,5 +1,11 @@
 import React, { useState } from 'react'
 
+const HandleButton = ({ handleClick, text }) => (
+  <button onClick={handleClick}>
+    {text}
+  </button>
+)
+
 const App = () => {
   const anecdotes = [
     'If it hurts, do it more often',
@@ -8,14 +14,31 @@ const App = () => {
     'Any fool can write code that a computer can understand. Good programmers write code that humans can understand.',
     'Premature optimization is the root of all evil.',
     'Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.',
-    'Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blod tests when dianosing patients'
+    'Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blod tests when diagnosing patients'
   ]
-   
+  
+  const [votes, setVotes] = useState(new Uint8Array(anecdotes.length))
   const [selected, setSelected] = useState(0)
+  const selectRandom = () => setSelected(Math.floor(Math.random() * anecdotes.length))
+  const addVote = (anecdote) => {
+    const votesCopy = [...votes]
+    votesCopy[anecdote]++
+    setVotes(votesCopy)
+  }
 
+  const mostVotesIndex = votes.indexOf(Math.max(...votes))
   return (
     <div>
-      {anecdotes[selected]}
+      <h1>Anecdote of the day</h1>
+      <p>{anecdotes[selected]}</p>
+      <p>has {votes[selected]} votes</p>
+
+      <HandleButton handleClick={() => addVote(selected)} text={"vote"} />
+      <HandleButton handleClick={selectRandom} text={"next anecdote"}/>
+
+      <h1>Anecdote with the most votes</h1>
+      <p>{anecdotes[mostVotesIndex]}</p>
+      <p>has {votes[mostVotesIndex]} votes</p>
     </div>
   )
 }
