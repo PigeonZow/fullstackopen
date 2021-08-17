@@ -12,6 +12,7 @@ const App = () => {
 
   useEffect(() => {
     axios.get('http://localhost:3001/persons').then(response => {
+      console.log("Data received")
       setPersons(response.data)
     })
   }, [])
@@ -19,9 +20,9 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Filter setFilter={setFilter} filter={filter}/>
+      <Filter setFilter={setFilter} filter={filter} />
       <h2>add a new</h2>
-      <PersonForm setPersons={setPersons} persons={persons}/>
+      <PersonForm setPersons={setPersons} persons={persons} />
       <h2>Numbers</h2>
       <Persons filter={filter} persons={persons} />
     </div>
