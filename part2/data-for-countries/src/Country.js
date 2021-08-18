@@ -1,14 +1,20 @@
 import axios from "axios"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 const Country = (props) => {
 
-    const access_key = process.env.REACT_APP_WEATHERSTACK_API_KEY
     const [ weatherData, setWeatherData ] = useState([])
+    const [ isLoaded, setIsLoaded ] = useState(false)
 
-    axios.get(`http://api.weatherstack.com/current?access_key=${access_key}&query=${props.country.capital}`).then(response => {
-        setWeatherData(response.data)
-        console.log("DATA RECEIVED")
+    useEffect(() => {
+        const access_key = process.env.REACT_APP_WEATHERSTACK_API_KEY
+        axios.get(`http://api.weatherstack.com/current?access_key=${access_key}&query=${props.country.capital}`).then(response => {
+            setWeatherData(response.data)
+            setIsLoaded(true)
+        })
+    }, [props])
+
+    if (isLoaded) {
         return (
             <div>
                 <h1>{props.country.name}</h1>
@@ -27,7 +33,11 @@ const Country = (props) => {
                 <p><b>wind: </b>{weatherData.current.wind_speed} mph direction {weatherData.current.wind_dir}</p>
             </div> 
         )
-    })
+    } else {
+        return <div>Loading...</div>
+    }
+
+
 
 }
 export { Country }
