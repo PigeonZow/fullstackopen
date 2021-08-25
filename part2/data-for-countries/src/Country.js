@@ -37,7 +37,5 @@ const Country = (props) => {
         return <div>Loading...</div>
     }
 
-
-
 }
 export { Country }

@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { PersonForm } from './PersonForm'
 import { Filter } from './Filter'
-import { Persons } from './Persons'
-import axios from 'axios'
+import personService from './services/PersonService'
 
 const App = () => {
 
@@ -11,11 +10,29 @@ const App = () => {
   const [ filter, setFilter ] = useState('')
 
   useEffect(() => {
-    axios.get('http://localhost:3001/persons').then(response => {
-      console.log("Data received")
-      setPersons(response.data)
+    personService.getAll().then(initialPersons => {
+      setPersons(initialPersons)
     })
   }, [])
+
+  const Persons = () => {
+    const personsToShow = persons.filter(person => person.name.toLowerCase().includes(filter))
+    return (
+        <div>
+            {personsToShow.map((person) => (
+                <p key={person.id}>{person.name} {person.number} <button onClick={() => deletePerson(person)}>delete</button></p>
+            ))}
+        </div>
+    )
+  }
+
+  const deletePerson = (person) => {
+    if (window.confirm(`Delete ${person.name}?`)) {
+      personService.remove(person.id).then(
+        setPersons(persons.filter(removedPerson => removedPerson.id !== person.id))
+      )
+    }
+  }
 
   return (
     <div>

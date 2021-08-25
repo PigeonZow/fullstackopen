@@ -1,4 +1,5 @@
 import { useState } from "react"
+import personService from "./services/PersonService"
 
 const PersonForm = (props) => {
 
@@ -17,23 +18,39 @@ const PersonForm = (props) => {
         e.preventDefault()
 
         let nameExists = false
+        let existingIndex;
         for (let i = 0; i < props.persons.length; i++) {
             if (newName === props.persons[i].name) {
-            nameExists = true
-            break
+                nameExists = true
+                existingIndex = i
+                break
             }
         }
         if (!nameExists) {
             const personObject = {
-                id: props.persons.length + 1,
+                id: Math.floor(Math.random() * (Number.MAX_SAFE_INTEGER)),
                 name: newName,
                 number: newNumber
             }
-            props.setPersons(props.persons.concat(personObject))
-            setNewName('')
-            setNewNumber('')
+
+            personService.create(personObject).then(returnedPerson => {
+                props.setPersons(props.persons.concat(returnedPerson))
+                setNewName('')
+                setNewNumber('')
+            })
+
         } else {
-            window.alert(`${newName} already exists in the phonebook.`)
+            if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
+                const previousPerson = props.persons[existingIndex]
+                const personObject = {
+                    id: previousPerson.id,
+                    name: previousPerson.name,
+                    number: newNumber
+                }
+                personService.update(previousPerson.id, personObject).then(returnedPerson => {
+                    props.setPersons(props.persons.map(person => person.id !== previousPerson.id ? person : returnedPerson))
+                })
+            }
         }
     }
 
